@@ -7,7 +7,7 @@ public class ChestKickerTest
 {
 	public static void main(String[] args) throws Exception
 	{
-		ExternalPluginManager.loadBuiltin(ChestKicker.class);
+		ExternalPluginManager.loadBuiltin(ChestKickerPlugin.class);
 		RuneLite.main(args);
 	}
 }
