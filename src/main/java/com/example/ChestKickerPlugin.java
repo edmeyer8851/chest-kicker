@@ -92,7 +92,7 @@ public class ChestKickerPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onClientTick(ClientTick e)
+	public void onGameTick(GameTick e)
 	{
 
 		if (genericChest != null && supportedKick != null)
@@ -109,7 +109,7 @@ public class ChestKickerPlugin extends Plugin
 				 	barrows gets its own case because there is no vanilla open animation.
 				 	not really happy with this, but it's hard to time the kick to look natural. This is the best I've come up with so far.
 				 */
-				case 20973:
+				case ObjectID.BARROWS_STONE_CHEST:
 					WorldPoint barrowsChestEastTile = new WorldPoint(3551, 9694, 0);
 					WorldPoint barrowsChestWestTile = new WorldPoint(3552, 9694, 0);
 					if (chestArea.distanceTo(player.getWorldArea()) == 1)
@@ -122,7 +122,7 @@ public class ChestKickerPlugin extends Plugin
 
 					break;
 				// idk why the moons distance is 2, but it is. Also has no open animation
-				case 51346:
+				case ObjectID.CHEST_SUN01_DEFAULT01:
 					if (chestArea.distanceTo(player.getWorldArea()) == 2)
 					{
 						playKick();
