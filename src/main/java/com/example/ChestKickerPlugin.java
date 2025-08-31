@@ -1,6 +1,5 @@
 package com.example;
 
-import java.util.List;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -14,7 +13,8 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.Text;
-import java.util.Arrays;
+import net.runelite.api.gameval.ObjectID;
+import java.util.Map;
 
 @Slf4j
 @PluginDescriptor(
@@ -29,30 +29,27 @@ public class ChestKickerPlugin extends Plugin
 	private LocalPoint supportedKick;
 	private GameObject genericChest;
 
-	// TODO: make this not dumb
-	List<String> kickOptions = Arrays.asList("Claim", "Open", "Open", "Open", "Open", "Open", "Open");
-	// 37341: cg chest, 51346 moons, 20973 barrows, 32993 tob, 32992 tob, 41696 toa, 44786 toa
-	List<Integer> chestsToKick = Arrays.asList(51346, 37341, 20973, 32993, 32992, 41696, 44786);
-
-	@Override
-	public void shutDown()
-	{
-		kickOptions = null;
-		chestsToKick = null;
-	}
+	private static final Map<Integer, String> chestMenuOptions = Map.of(
+			ObjectID.CHEST_SUN01_DEFAULT01, "Claim",
+			ObjectID.GAUNTLET_CHEST, "Open",
+			ObjectID.BARROWS_STONE_CHEST, "Open",
+			ObjectID.TOB_TREASUREROOM_CHEST_MINE_RARE, "Open",
+			ObjectID.TOB_TREASUREROOM_CHEST_MINE_STANDARD, "Open",
+			ObjectID.TOA_VAULT_CHEST_NOTMINE_STANDARD, "Open",
+			ObjectID.TOA_VAULT_CHEST_MINE_STANDARD, "Open"
+	);
 
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked e)
 	{
 		// set the supportedKick value to a non-null when you interact with the chest that is supported
 		int target = e.getId();
-		int index = chestsToKick.indexOf(target);
 
-		if (index != -1)
+		if (chestMenuOptions.containsKey(target))
 		{
 			String option = Text.removeFormattingTags(e.getMenuOption());
 
-			if (kickOptions.get(index).equals(option))
+			if (chestMenuOptions.get(target).equals(option))
 			{
 				supportedKick = LocalPoint.fromScene(e.getParam0(), e.getParam1(), client.getLocalPlayer().getWorldView());
 			}
@@ -70,7 +67,7 @@ public class ChestKickerPlugin extends Plugin
 		GameObject gameObject = event.getGameObject();
 		int objectId = gameObject.getId();
 
-		if (chestsToKick.contains(objectId)) {
+		if (chestMenuOptions.containsKey(objectId)) {
 			genericChest = gameObject;
 		}
 	}
@@ -81,7 +78,7 @@ public class ChestKickerPlugin extends Plugin
 		GameObject gameObject = event.getGameObject();
 		int objectId = gameObject.getId();
 
-		if (chestsToKick.contains(objectId)) {
+		if (chestMenuOptions.containsKey(objectId)) {
 			genericChest = null;
 		}
 	}
